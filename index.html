@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=56cb0d1d-ce74-4748-b49d-47b90aebf8ea
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>かんながラーハ - 言葉の処方箋</title>
+  <style>
+    body {
+      background-color: #ffffff;
+      color: #333333;
+      font-family: "Georgia", "Yu Mincho", "Hiragino Mincho ProN", serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start; /* ← center から flex-start に変更 */
+      min-height: 100vh;
+      margin: 0;
+      padding: 40px 20px 20px 20px; /* ← 上の余白を 60px にして位置を調整 */
+      box-sizing: border-box;
+    }
+
+    .container {
+      max-width: 550px;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* クリックしてトップに戻れるタイトル */
+    h1 {
+      font-size: 1.5rem;
+      letter-spacing: 0.2em;
+      color: #d4af37;
+      margin-bottom: 25px;
+      cursor: pointer;
+      user-select: none;
+      transition: opacity 0.2s ease;
+    }
+
+    h1:hover {
+      opacity: 0.7;
+    }
+
+    .card {
+      background: #fafafa;
+      border: 1px solid rgba(184, 134, 11, 0.4);
+      border-radius: 12px;
+      padding: 30px 25px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transition: opacity 0.5s ease;
+      text-align: center; /* トップの雰囲気に合わせて中央寄せ */
+    }
+
+    /* 1. タイトル */
+    .card-title {
+      font-size: 1.15rem;
+      color: #d4af37;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    /* 心を落ち着かせて、 */
+    .card-intro {
+      font-size: 1.0rem;
+      color: #888888;
+      margin-bottom: 25px;
+    }
+
+    /* 2. 詩の全文エリア */
+    .card-poetry {
+      font-size: 1.0rem;
+      line-height: 2.1;
+      color: #2c3e50;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 3px solid #d4af37;
+      margin-bottom: 15px;
+      white-space: pre-wrap;
+      max-height: 300px;
+      overflow-y: auto;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.03);
+      text-align: left;
+      display: none; /* 初期状態（トップ）では非表示 */
+    }
+
+    /* 作者名 */
+    .card-author {
+      font-size: 0.9rem;
+      color: #d4af37;
+      text-align: right;
+      margin-bottom: 20px;
+      font-style: italic;
+      display: none;
+    }
+
+    /* 3. 一言キャッチ */
+    .card-quote {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin-bottom: 20px;
+      color: #333333;
+      text-align: center;
+      padding: 16px;
+      background: rgba(184, 134, 11, 0.08);
+      border-radius: 8px;
+      font-style: italic;
+      border: 1px dashed rgba(184, 134, 11, 0.3);
+      display: none;
+    }
+
+    /* 4. 導き・問いかけメッセージ */
+    .card-message {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: #666666;
+      border-top: 1px solid #eee;
+      padding-top: 18px;
+      text-align: left;
+      display: none;
+    }
+
+    /* 案内テキスト（ボタンの下に表示） */
+    .card-guide {
+      font-size: 0.85rem;
+      color: #888888;
+      margin-top: 20px;
+      line-height: 1.6;
+    }
+
+    /* メインボタン */
+    .btn {
+      background: transparent;
+      border: 1px solid #d4af37;
+      color: #d4af37;
+      padding: 12px 35px;
+      font-size: 1rem;
+      border-radius: 30px;
+      cursor: pointer;
+      letter-spacing: 0.1em;
+      transition: all 0.3s ease;
+      margin: 10px 0;
+    }
+
+    .btn-reset:hover {
+      color: #d4af37;
+    }
+
+    /* OFUSE（おさいせん）リンク用の配置エリア */
+    .ofuse-container {
+      margin-top: 45px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .ofuse-link {
+      color: #888888;
+      font-size: 0.85rem;
+      letter-spacing: 0.05em;
+      text-decoration: underline;
+      transition: color 0.2s ease;
+    }
+
+    .ofuse-link:hover {
+      color: #d4af37;
+    }
+
+    /* トップへ戻るサブボタン */
+    .btn-reset {
+      background: transparent;
+      border: none;
+      color: #888888;
+      font-size: 0.85rem;
+      cursor: pointer;
+      letter-spacing: 0.05em;
+      text-decoration: underline;
+      transition: color 0.2s ease;
+      display: none;
+      margin-top: 20px;
+    }
+
+    .btn-reset:hover {
+      color: #d4af37;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+<h1 onclick="resetToTop()" style="color: #d4af37; margin-bottom: 40px;">
+      今日のことば
+      <span style="display: block; font-size: 1.05rem; margin-top: 19px; color: #d4af37; font-weight: normal;">〜『瞑想と内省』そして内声へ〜</span>
+    </h1>
+
+    <div class="card" id="card">
+      <div class="card-title" id="title">沈黙と静寂のとびら</div>
+      <div class="card-intro" id="intro">心を落ち着かせて、</div>
+
+      <!-- ボタンをカードの中に配置 -->
+      <div id="btn-container">
+        <button class="btn" id="draw-btn" onclick="drawCard()">今日のことば</button>
+      </div>
+
+      <div class="card-guide" id="guide">ボタンを押して、今のあなたに必要なことばをうけとってください</div>
+
+      <!-- カード結果表示用（初期は非表示） -->
+      <div class="card-quote" id="quote"></div>
+      <div class="card-message" id="message"></div>
+      <div class="card-author" id="author"></div>
+      <div class="card-poetry" id="poetry"></div>
+    </div>
+
+    <!-- カードを引いた後に出てくる「トップに戻る」ボタン -->
+    <button class="btn-reset" id="reset-btn" onclick="resetToTop()">← トップに戻る</button>
+
+  </div>
+
+  <script>
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwHnjWFgUDnB-65GOyBLVknlpdxVoKRx_k9j7o7anWDF9iM9Zvs9sdNv1iuASce0pBqqg/exec";
+    let cardData = [];
+
+    async function fetchCards() {
+      try {
+        const response = await fetch(GAS_URL);
+        cardData = await response.json();
+      } catch (error) {
+        console.error("データの読み込みに失敗しました", error);
+      }
+    }
+
+    function drawCard() {
+      if (cardData.length === 0) {
+        alert("データを読み込み中です。少々お待ちいただくか、GASのURLをご確認ください。");
+        return;
+      }
+
+      const randomIndex = Math.floor(Math.random() * cardData.length);
+      const selected = cardData[randomIndex];
+
+      const cardElement = document.getElementById("card");
+      cardElement.style.opacity = 0;
+
+      setTimeout(() => {
+        // トップ専用の要素を非表示にする
+        document.getElementById("intro").style.display = "none";
+        document.getElementById("guide").style.display = "none";
+
+        // タイトル
+        document.getElementById("title").innerText = selected.title ? `【${selected.title}】` : "";
+        
+        // 詩の全文
+        const poetryEl = document.getElementById("poetry");
+        if (selected.poetry) {
+          poetryEl.innerHTML = selected.poetry.replace(/\n/g, '<br>');
+          poetryEl.style.display = "block";
+        } else {
+          poetryEl.style.display = "none";
+        }
+
+        // 作者名
+        const authorEl = document.getElementById("author");
+        if (selected.author) {
+          authorEl.innerText = `— ${selected.author}`;
+          authorEl.style.display = "block";
+        } else {
+          authorEl.style.display = "none";
+        }
+
+        // 一言キャッチ
+        const quoteEl = document.getElementById("quote");
+        if (selected.quote) {
+          quoteEl.innerHTML = `「${selected.quote.replace(/\n/g, '<br>')}」`;
+          quoteEl.style.display = "block";
+        } else {
+          quoteEl.style.display = "none";
+        }
+
+        // 導きメッセージ
+        const messageEl = document.getElementById("message");
+        if (selected.message) {
+          messageEl.innerHTML = selected.message.replace(/\n/g, '<br>');
+          messageEl.style.display = "block";
+        } else {
+          messageEl.style.display = "none";
+        }
+
+        // ボタンの文字変更と位置をカード下部へ移動
+        const drawBtn = document.getElementById("draw-btn");
+        drawBtn.innerText = "もう一度ひく";
+        document.getElementById("card").appendChild(document.getElementById("btn-container"));
+
+        document.getElementById("reset-btn").style.display = "inline-block";
+        
+        cardElement.style.opacity = 1;
+      }, 300);
+    }
+
+    function resetToTop() {
+      const cardElement = document.getElementById("card");
+      cardElement.style.opacity = 0;
+
+      setTimeout(() => {
+        // トップ用の要素を表示復元
+        document.getElementById("title").innerText = "沈黙と静寂のとびら";
+        document.getElementById("intro").style.display = "block";
+        document.getElementById("guide").style.display = "block";
+
+        // カード結果部分を非表示に
+        document.getElementById("poetry").style.display = "none";
+        document.getElementById("author").style.display = "none";
+        document.getElementById("quote").style.display = "none";
+        document.getElementById("message").style.display = "none";
+
+        // ボタンを案内テキストの上に再配置
+        const btnContainer = document.getElementById("btn-container");
+        const guideEl = document.getElementById("guide");
+        document.getElementById("card").insertBefore(btnContainer, guideEl);
+
+        document.getElementById("draw-btn").innerText = "今日のことばをひく";
+        document.getElementById("reset-btn").style.display = "none";
+
+        cardElement.style.opacity = 1;
+      }, 300);
+    }
+
+    fetchCards();
+  </script>
+</body>
+</html>
